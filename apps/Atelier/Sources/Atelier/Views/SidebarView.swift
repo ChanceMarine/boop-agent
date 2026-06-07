@@ -32,7 +32,7 @@ struct MainRailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AtelierColors.rail)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
         .shadow(color: .black.opacity(0.10), radius: 14, x: 0, y: 8)
     }
 
