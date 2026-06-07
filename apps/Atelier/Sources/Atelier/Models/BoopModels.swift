@@ -91,3 +91,34 @@ struct ToolkitConnection: Identifiable, Codable, Hashable {
         alias ?? accountLabel ?? accountEmail ?? accountName ?? status
     }
 }
+
+struct BrowserStatus: Codable, Hashable {
+    let running: Bool
+    let patchrightVersion: String?
+    let detectedChromePath: String?
+    let launchedAt: Double?
+    let settings: BrowserSettings
+    let activeUrl: String?
+}
+
+struct BrowserSettings: Codable, Hashable {
+    let enabled: Bool
+    let profileDir: String
+    let showUi: Bool
+    let loginHandoffEnabled: Bool
+    let startUrl: String
+    let channel: String
+    let executablePath: String
+    let extraArgs: [String]
+}
+
+struct ChangelogPayload: Codable, Hashable {
+    let repo: String
+    let branch: String
+    let version: String
+    let source: String
+    let url: String?
+    let fetchedAt: String
+    let markdown: String
+    let warning: String?
+}

@@ -55,6 +55,30 @@ final class ConvexClient {
         )
     }
 
+    func dashboardMetrics() async throws -> DashboardMetrics {
+        try await query(
+            "dashboard:metrics",
+            args: [:],
+            as: DashboardMetrics.self
+        )
+    }
+
+    func agents(limit: Int = 50) async throws -> [ExecutionAgent] {
+        try await query(
+            "agents:list",
+            args: ["limit": limit],
+            as: [ExecutionAgent].self
+        )
+    }
+
+    func consolidationRuns(limit: Int = 25) async throws -> [ConsolidationRun] {
+        try await query(
+            "consolidation:listRuns",
+            args: ["limit": limit],
+            as: [ConsolidationRun].self
+        )
+    }
+
     private func query<Value: Decodable>(
         _ path: String,
         args: [String: Any],

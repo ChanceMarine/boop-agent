@@ -39,8 +39,8 @@ enum AtelierMainTab: String, CaseIterable, Identifiable {
         switch self {
         case .agent:
             [
-                AtelierSubtabSection(id: "conversation", title: nil, routes: [.chat]),
-                AtelierSubtabSection(id: "live", title: "Live", routes: [.activity]),
+                AtelierSubtabSection(id: "start", title: nil, routes: [.overview, .chat]),
+                AtelierSubtabSection(id: "work", title: "Work", routes: [.agents, .activity]),
             ]
         case .memory:
             [
@@ -48,16 +48,16 @@ enum AtelierMainTab: String, CaseIterable, Identifiable {
             ]
         case .workflows:
             [
-                AtelierSubtabSection(id: "workflows", title: nil, routes: [.automations]),
+                AtelierSubtabSection(id: "workflows", title: nil, routes: [.automations, .consolidation]),
             ]
         case .connections:
             [
-                AtelierSubtabSection(id: "connections", title: nil, routes: [.connections]),
+                AtelierSubtabSection(id: "connections", title: nil, routes: [.connections, .browser]),
             ]
         case .settings:
             [
                 AtelierSubtabSection(id: "health", title: nil, routes: [.status]),
-                AtelierSubtabSection(id: "preferences", title: "Preferences", routes: [.settings]),
+                AtelierSubtabSection(id: "preferences", title: "Preferences", routes: [.settings, .changelog]),
             ]
         }
     }
@@ -68,51 +68,66 @@ enum AtelierMainTab: String, CaseIterable, Identifiable {
 }
 
 enum AtelierRoute: String, CaseIterable, Identifiable {
+    case overview
     case chat
+    case agents
     case activity
     case memory
     case automations
+    case consolidation
     case connections
+    case browser
     case status
     case settings
+    case changelog
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .overview: "Overview"
         case .chat: "Chat"
+        case .agents: "Agents"
         case .activity: "Activity"
         case .memory: "Memory"
         case .automations: "Automations"
+        case .consolidation: "Consolidation"
         case .connections: "Connections"
+        case .browser: "Browser"
         case .status: "Status"
         case .settings: "Settings"
+        case .changelog: "Changelog"
         }
     }
 
     var systemImage: String {
         switch self {
+        case .overview: "square.grid.2x2"
         case .chat: "bubble.left.and.bubble.right"
+        case .agents: "cpu"
         case .activity: "waveform.path.ecg"
         case .memory: "books.vertical"
         case .automations: "clock.arrow.circlepath"
+        case .consolidation: "arrow.triangle.merge"
         case .connections: "link"
+        case .browser: "globe"
         case .status: "checkmark.seal"
         case .settings: "gearshape"
+        case .changelog: "doc.text"
         }
     }
 
     var mainTab: AtelierMainTab {
         switch self {
-        case .chat, .activity:
+        case .overview, .chat, .agents, .activity:
             .agent
         case .memory:
             .memory
-        case .automations:
+        case .automations, .consolidation:
             .workflows
-        case .connections:
+        case .connections, .browser:
             .connections
-        case .status, .settings:
+        case .status, .settings, .changelog:
             .settings
         }
     }

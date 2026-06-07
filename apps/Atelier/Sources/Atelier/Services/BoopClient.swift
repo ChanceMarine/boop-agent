@@ -51,6 +51,14 @@ final class BoopClient {
         try await get("/composio/toolkits", as: ToolkitListResponse.self)
     }
 
+    func browserStatus() async throws -> BrowserStatus {
+        try await get("/browser/status", as: BrowserStatus.self)
+    }
+
+    func changelog() async throws -> ChangelogPayload {
+        try await get("/changelog", as: ChangelogPayload.self)
+    }
+
     private func get<Value: Decodable>(_ path: String, as type: Value.Type) async throws -> Value {
         let url = baseURL.appendingPathComponent(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
         let (data, response) = try await session.data(from: url)

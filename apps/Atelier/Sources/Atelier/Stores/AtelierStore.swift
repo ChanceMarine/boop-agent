@@ -2,18 +2,28 @@ import Foundation
 
 @MainActor
 final class AtelierStore: ObservableObject {
-    @Published var selectedRoute: AtelierRoute = .chat
+    @Published var selectedRoute: AtelierRoute = .overview
     @Published var backendState: BackendState = .unknown
     @Published var runtimeConfig: RuntimeConfig?
     @Published var messages: [ChatMessage] = []
+    @Published var dashboardMetrics: DashboardMetrics?
+    @Published var agents: [ExecutionAgent] = []
     @Published var memories: [MemoryRecord] = []
     @Published var automations: [AutomationRecord] = []
+    @Published var consolidationRuns: [ConsolidationRun] = []
     @Published var toolkits: [Toolkit] = []
+    @Published var browserStatus: BrowserStatus?
+    @Published var changelog: ChangelogPayload?
     @Published var composioEnabled = false
     @Published var isSending = false
+    @Published var isLoadingDashboard = false
+    @Published var isLoadingAgents = false
     @Published var isLoadingMemory = false
     @Published var isLoadingAutomations = false
+    @Published var isLoadingConsolidation = false
     @Published var isLoadingConnections = false
+    @Published var isLoadingBrowser = false
+    @Published var isLoadingChangelog = false
     @Published var lastError: String?
 
     @Published var boopBaseURLString: String {
@@ -86,6 +96,30 @@ final class AtelierStore: ObservableObject {
         }
     }
 
+    func loadDashboard() async {
+        guard !isLoadingDashboard else { return }
+        isLoadingDashboard = true
+        defer { isLoadingDashboard = false }
+        do {
+            dashboardMetrics = try await convexClient.dashboardMetrics()
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadAgents() async {
+        guard !isLoadingAgents else { return }
+        isLoadingAgents = true
+        defer { isLoadingAgents = false }
+        do {
+            agents = try await convexClient.agents()
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
     func send(_ content: String) async {
         let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isSending else { return }
@@ -134,6 +168,18 @@ final class AtelierStore: ObservableObject {
         }
     }
 
+    func loadConsolidation() async {
+        guard !isLoadingConsolidation else { return }
+        isLoadingConsolidation = true
+        defer { isLoadingConsolidation = false }
+        do {
+            consolidationRuns = try await convexClient.consolidationRuns()
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
     func loadConnections() async {
         guard !isLoadingConnections else { return }
         isLoadingConnections = true
@@ -146,6 +192,32 @@ final class AtelierStore: ObservableObject {
         } catch {
             composioEnabled = false
             toolkits = []
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadBrowserStatus() async {
+        guard !isLoadingBrowser else { return }
+        isLoadingBrowser = true
+        defer { isLoadingBrowser = false }
+        do {
+            browserStatus = try await boopClient.browserStatus()
+            lastError = nil
+        } catch {
+            browserStatus = nil
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadChangelog() async {
+        guard !isLoadingChangelog else { return }
+        isLoadingChangelog = true
+        defer { isLoadingChangelog = false }
+        do {
+            changelog = try await boopClient.changelog()
+            lastError = nil
+        } catch {
+            changelog = nil
             lastError = error.localizedDescription
         }
     }

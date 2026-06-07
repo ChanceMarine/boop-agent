@@ -85,20 +85,30 @@ private struct DetailView: View {
 
     var body: some View {
         switch route {
+        case .overview:
+            OverviewView()
         case .chat:
             ChatView()
+        case .agents:
+            AgentsView()
         case .activity:
             ActivityView()
         case .memory:
             MemoryView()
         case .automations:
             AutomationsView()
+        case .consolidation:
+            ConsolidationView()
         case .connections:
             ConnectionsView()
+        case .browser:
+            BrowserView()
         case .status:
             StatusView()
         case .settings:
             AppSettingsView()
+        case .changelog:
+            ChangelogView()
         }
     }
 }

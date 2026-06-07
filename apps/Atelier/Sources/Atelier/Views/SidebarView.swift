@@ -137,20 +137,31 @@ struct SubtabSidebarView: View {
 
     private func countText(for route: AtelierRoute) -> String? {
         switch route {
+        case .overview:
+            return nil
         case .chat:
-            store.messages.isEmpty ? nil : "\(store.messages.count)"
+            return store.messages.isEmpty ? nil : "\(store.messages.count)"
+        case .agents:
+            let running = store.agents.filter { $0.status == "running" || $0.status == "spawned" }.count
+            return running > 0 ? "\(running)" : "\(store.agents.count)"
         case .activity:
-            nil
+            return nil
         case .memory:
-            "\(store.memories.count)"
+            return "\(store.memories.count)"
         case .automations:
-            "\(store.automations.filter(\.enabled).count)"
+            return "\(store.automations.filter(\.enabled).count)"
+        case .consolidation:
+            return store.consolidationRuns.isEmpty ? nil : "\(store.consolidationRuns.count)"
         case .connections:
-            "\(store.toolkits.filter { !$0.connections.isEmpty }.count)"
+            return "\(store.toolkits.filter { !$0.connections.isEmpty }.count)"
+        case .browser:
+            return store.browserStatus?.running == true ? "On" : nil
         case .status:
-            store.backendState.label
+            return store.backendState.label
         case .settings:
-            nil
+            return nil
+        case .changelog:
+            return store.changelog?.version
         }
     }
 }
