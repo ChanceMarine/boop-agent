@@ -12,7 +12,8 @@ struct RootView: View {
                 MainRailView(selection: $store.selectedRoute)
                     .frame(width: 58)
                     .padding(.leading, 8)
-                    .padding(.vertical, 8)
+                    .padding(.top, 40)
+                    .padding(.bottom, 8)
 
                 SubtabSidebarView(mainTab: store.selectedRoute.mainTab, selection: $store.selectedRoute)
                     .frame(width: 240)
@@ -21,6 +22,7 @@ struct RootView: View {
                     .padding(.trailing, 14)
                     .padding(.vertical, 14)
             }
+            .ignoresSafeArea(.container, edges: .top)
         }
     }
 }
