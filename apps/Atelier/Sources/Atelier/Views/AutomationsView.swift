@@ -5,13 +5,6 @@ struct AutomationsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(
-                title: "Automations",
-                subtitle: "\(store.automations.filter(\.enabled).count) enabled of \(store.automations.count)"
-            )
-
-            Divider()
-
             if store.isLoadingAutomations {
                 ProgressView("Loading automations…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -43,13 +36,7 @@ struct AutomationsView: View {
                     }
                     .padding(.vertical, 6)
                 }
-            }
-        }
-        .toolbar {
-            Button {
-                Task { await store.loadAutomations() }
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                .scrollContentBackground(.hidden)
             }
         }
         .task {

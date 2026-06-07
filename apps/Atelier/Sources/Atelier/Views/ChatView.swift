@@ -6,19 +6,12 @@ struct ChatView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(
-                title: "Chat",
-                subtitle: "Talk to Boop through the local backend."
-            )
-
-            Divider()
-
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 14) {
                     if store.messages.isEmpty {
                         EmptyStateView(
                             title: "Start a conversation",
-                            message: "Atelier will keep this thread separate from your old Harvey tests."
+                            message: "No messages in this thread yet."
                         )
                         .frame(maxWidth: .infinity, minHeight: 260)
                     } else {
@@ -30,7 +23,9 @@ struct ChatView: View {
                 .padding(24)
             }
 
-            Divider()
+            Rectangle()
+                .fill(AtelierColors.separator)
+                .frame(height: 1)
 
             ComposerView(
                 text: $draft,

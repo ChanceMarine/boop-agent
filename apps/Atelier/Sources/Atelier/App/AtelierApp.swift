@@ -8,6 +8,7 @@ struct AtelierApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(store)
+                .preferredColorScheme(.light)
                 .task {
                     await store.refreshBackendStatus()
                 }
@@ -25,6 +26,7 @@ struct AtelierApp: App {
         Settings {
             AppSettingsView()
                 .environmentObject(store)
+                .preferredColorScheme(.light)
                 .frame(width: 520)
                 .padding()
         }

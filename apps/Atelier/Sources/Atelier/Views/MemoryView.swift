@@ -5,13 +5,6 @@ struct MemoryView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(
-                title: "Memory",
-                subtitle: "\(store.memories.count) active records"
-            )
-
-            Divider()
-
             if store.isLoadingMemory {
                 ProgressView("Loading memory…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,13 +34,7 @@ struct MemoryView: View {
                     }
                     .padding(.vertical, 6)
                 }
-            }
-        }
-        .toolbar {
-            Button {
-                Task { await store.loadMemory() }
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                .scrollContentBackground(.hidden)
             }
         }
         .task {

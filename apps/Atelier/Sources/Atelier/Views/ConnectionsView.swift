@@ -9,13 +9,6 @@ struct ConnectionsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(
-                title: "Connections",
-                subtitle: store.composioEnabled ? "\(connectedToolkits.count) connected toolkits" : "Composio disabled"
-            )
-
-            Divider()
-
             if store.isLoadingConnections {
                 ProgressView("Loading connections…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -64,13 +57,7 @@ struct ConnectionsView: View {
                     }
                     .padding(.vertical, 6)
                 }
-            }
-        }
-        .toolbar {
-            Button {
-                Task { await store.loadConnections() }
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                .scrollContentBackground(.hidden)
             }
         }
         .task {

@@ -1,5 +1,14 @@
 import SwiftUI
 
+enum AtelierColors {
+    static let windowBackground = Color(red: 247 / 255, green: 248 / 255, blue: 250 / 255)
+    static let rail = Color(red: 37 / 255, green: 37 / 255, blue: 37 / 255)
+    static let card = Color(red: 252 / 255, green: 252 / 255, blue: 252 / 255)
+    static let cardStroke = Color.white
+    static let selectedSubtab = Color.black.opacity(0.06)
+    static let separator = Color.black.opacity(0.06)
+}
+
 struct HeaderView: View {
     let title: String
     let subtitle: String
