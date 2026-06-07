@@ -133,11 +133,6 @@ struct SubtabSidebarView: View {
         }
         .frame(maxHeight: .infinity)
         .background(AtelierColors.windowBackground)
-        .overlay(alignment: .trailing) {
-            Rectangle()
-                .fill(AtelierColors.separator)
-                .frame(width: 1)
-        }
     }
 
     private func countText(for route: AtelierRoute) -> String? {

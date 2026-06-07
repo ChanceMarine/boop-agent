@@ -14,6 +14,7 @@ struct AtelierApp: App {
                 }
         }
         .defaultSize(width: 1120, height: 760)
+        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Chat") {
