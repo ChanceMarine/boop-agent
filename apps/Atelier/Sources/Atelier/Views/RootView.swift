@@ -10,10 +10,7 @@ struct RootView: View {
 
             HStack(spacing: 0) {
                 MainRailView(selection: $store.selectedRoute)
-                    .frame(width: 58)
-                    .padding(.leading, 8)
-                    .padding(.top, 40)
-                    .padding(.bottom, 8)
+                    .frame(width: 78)
 
                 SubtabSidebarView(mainTab: store.selectedRoute.mainTab, selection: $store.selectedRoute)
                     .frame(width: 240)
@@ -22,7 +19,7 @@ struct RootView: View {
                     .padding(.trailing, 14)
                     .padding(.vertical, 14)
             }
-            .ignoresSafeArea(.container, edges: .top)
+            .ignoresSafeArea(.container, edges: .vertical)
         }
     }
 }
