@@ -2,6 +2,8 @@ import SwiftUI
 
 struct MainRailView: View {
     @Binding var selection: AtelierRoute
+    let sidePaneRoute: AtelierRoute?
+    let openPane: (AtelierRoute) -> Void
 
     private var primaryTabs: [AtelierMainTab] {
         AtelierMainTab.allCases.filter { $0 != .settings }
@@ -17,7 +19,9 @@ struct MainRailView: View {
                 RailTabButton(
                     tab: tab,
                     isSelected: selection.mainTab == tab,
-                    action: { select(tab) }
+                    isPaneActive: sidePaneRoute?.mainTab == tab,
+                    action: { select(tab) },
+                    paneAction: { openPaneFor(tab) }
                 )
             }
 
@@ -26,7 +30,9 @@ struct MainRailView: View {
             RailTabButton(
                 tab: .settings,
                 isSelected: selection.mainTab == .settings,
-                action: { select(.settings) }
+                isPaneActive: sidePaneRoute?.mainTab == .settings,
+                action: { select(.settings) },
+                paneAction: { openPaneFor(.settings) }
             )
             .padding(.bottom, 8)
         }
@@ -39,6 +45,11 @@ struct MainRailView: View {
     private func select(_ tab: AtelierMainTab) {
         guard let firstRoute = tab.routes.first else { return }
         selection = firstRoute
+    }
+
+    private func openPaneFor(_ tab: AtelierMainTab) {
+        guard let firstRoute = tab.routes.first else { return }
+        openPane(firstRoute)
     }
 }
 
@@ -59,50 +70,91 @@ private struct RailLogo: View {
 private struct RailTabButton: View {
     let tab: AtelierMainTab
     let isSelected: Bool
+    let isPaneActive: Bool
     let action: () -> Void
+    let paneAction: () -> Void
 
     @State private var isHovered = false
+    @State private var isPaneHovered = false
+
+    private var isExpanded: Bool {
+        isHovered || isPaneHovered
+    }
+
+    private var showsPaneButton: Bool {
+        isExpanded || isPaneActive
+    }
 
     var body: some View {
-        Button(action: action) {
-            ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .fill(backgroundOpacity)
-                    .frame(width: isHovered ? 42 : 38, height: isHovered ? 42 : 38)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        ZStack(alignment: .topTrailing) {
+            Button(action: action) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(backgroundOpacity)
+                        .frame(width: isExpanded ? 42 : 38, height: isExpanded ? 42 : 38)
 
-                Image(systemName: tab.systemImage)
-                    .font(.system(size: isHovered ? 17 : 16, weight: .semibold))
-                    .frame(width: 38, height: 38)
-                    .foregroundStyle(isSelected ? .white : .white.opacity(isHovered ? 0.88 : 0.68))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-
-                PaneHoverIcon(style: .rail)
-                    .opacity(isHovered ? 1 : 0)
-                    .scaleEffect(isHovered ? 1 : 0.76)
-                    .rotationEffect(.degrees(isHovered ? 0 : -6))
-                    .offset(x: -3, y: 3)
-                    .allowsHitTesting(false)
+                    Image(systemName: tab.systemImage)
+                        .font(.system(size: isExpanded ? 17 : 16, weight: .semibold))
+                        .frame(width: 38, height: 38)
+                        .foregroundStyle(isSelected ? .white : .white.opacity(isExpanded ? 0.88 : 0.68))
+                }
+                .frame(width: 50, height: 48)
+                .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                .scaleEffect(isExpanded ? 1.03 : 1)
             }
-            .frame(width: 50, height: 48)
-            .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-            .scaleEffect(isHovered ? 1.03 : 1)
-            .animation(.spring(response: 0.20, dampingFraction: 0.78), value: isHovered)
-            .animation(.easeOut(duration: 0.14), value: isSelected)
+            .buttonStyle(.plain)
+
+            PaneHoverButton(
+                style: .rail,
+                isVisible: showsPaneButton,
+                action: paneAction,
+                onHoverChange: { isPaneHovered = $0 }
+            )
+            .offset(x: -3, y: 3)
         }
-        .buttonStyle(.plain)
+        .frame(width: 50, height: 48)
         .onHover { hovered in
             isHovered = hovered
         }
         .help(tab.title)
         .accessibilityLabel(tab.title)
+        .animation(.spring(response: 0.20, dampingFraction: 0.78), value: isExpanded)
+        .animation(.easeOut(duration: 0.14), value: isSelected)
     }
 
     private var backgroundOpacity: Color {
         if isSelected {
-            return .white.opacity(isHovered ? 0.18 : 0.14)
+            return .white.opacity(isExpanded ? 0.18 : 0.14)
         }
-        return .white.opacity(isHovered ? 0.09 : 0)
+        return .white.opacity(isExpanded ? 0.09 : 0)
+    }
+}
+
+private struct PaneHoverButton: View {
+    let style: PaneHoverIcon.Style
+    let isVisible: Bool
+    let action: () -> Void
+    let onHoverChange: (Bool) -> Void
+
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            PaneHoverIcon(style: style)
+                .scaleEffect(isHovered ? 1.10 : 1)
+                .rotationEffect(.degrees(isVisible ? 0 : -6))
+        }
+        .buttonStyle(.plain)
+        .opacity(isVisible ? 1 : 0)
+        .scaleEffect(isVisible ? 1 : 0.76)
+        .allowsHitTesting(isVisible)
+        .onHover { hovered in
+            isHovered = hovered
+            onHoverChange(hovered)
+        }
+        .help("Open in side pane")
+        .animation(.spring(response: 0.18, dampingFraction: 0.78), value: isHovered)
+        .animation(.spring(response: 0.20, dampingFraction: 0.82), value: isVisible)
     }
 }
 
@@ -201,6 +253,8 @@ struct SubtabSidebarView: View {
 
     let mainTab: AtelierMainTab
     @Binding var selection: AtelierRoute
+    let sidePaneRoute: AtelierRoute?
+    let openPane: (AtelierRoute) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -227,7 +281,9 @@ struct SubtabSidebarView: View {
                             route: route,
                             count: countText(for: route),
                             isSelected: selection == route,
-                            action: { selection = route }
+                            isPaneActive: sidePaneRoute == route,
+                            action: { selection = route },
+                            paneAction: { openPane(route) }
                         )
                     }
                 }
@@ -292,63 +348,81 @@ private struct SubtabRow: View {
     let route: AtelierRoute
     let count: String?
     let isSelected: Bool
+    let isPaneActive: Bool
     let action: () -> Void
+    let paneAction: () -> Void
 
     @State private var isHovered = false
+    @State private var isPaneHovered = false
+
+    private var isExpanded: Bool {
+        isHovered || isPaneHovered
+    }
+
+    private var showsPaneButton: Bool {
+        isExpanded || isPaneActive
+    }
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Image(systemName: route.systemImage)
-                    .font(.system(size: 13, weight: .medium))
-                    .frame(width: 18)
-                    .foregroundStyle(isSelected ? .primary : .secondary)
-                    .scaleEffect(isHovered ? 1.05 : 1)
+        ZStack(alignment: .trailing) {
+            Button(action: action) {
+                HStack(spacing: 10) {
+                    Image(systemName: route.systemImage)
+                        .font(.system(size: 13, weight: .medium))
+                        .frame(width: 18)
+                        .foregroundStyle(isSelected ? .primary : .secondary)
+                        .scaleEffect(isExpanded ? 1.05 : 1)
 
-                Text(route.title)
-                    .font(.callout)
-                    .foregroundStyle(.primary)
-                    .offset(x: isHovered ? 1 : 0)
-
-                Spacer()
-
-                if let count {
-                    Text(count)
+                    Text(route.title)
                         .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
-                        .opacity(isHovered ? 0.72 : 1)
-                }
+                        .foregroundStyle(.primary)
+                        .offset(x: isExpanded ? 1 : 0)
 
-                PaneHoverIcon(style: .sidebar)
-                    .opacity(isHovered ? 1 : 0)
-                    .scaleEffect(isHovered ? 1 : 0.84)
-                    .frame(width: isHovered ? 21 : 0)
-                    .allowsHitTesting(false)
+                    Spacer()
+
+                    if let count {
+                        Text(count)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .opacity(isExpanded ? 0.72 : 1)
+                    }
+
+                    Color.clear
+                        .frame(width: showsPaneButton ? 24 : 0)
+                }
+                .padding(.horizontal, 10)
+                .frame(height: 30)
+                .background {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(rowBackground)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .scaleEffect(isExpanded ? 1.01 : 1, anchor: .center)
             }
-            .padding(.horizontal, 10)
-            .frame(height: 30)
-            .background {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(rowBackground)
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .scaleEffect(isHovered ? 1.01 : 1, anchor: .center)
-            .animation(.spring(response: 0.20, dampingFraction: 0.86), value: isHovered)
-            .animation(.easeOut(duration: 0.14), value: isSelected)
+            .buttonStyle(.plain)
+
+            PaneHoverButton(
+                style: .sidebar,
+                isVisible: showsPaneButton,
+                action: paneAction,
+                onHoverChange: { isPaneHovered = $0 }
+            )
+            .padding(.trailing, 8)
         }
-        .buttonStyle(.plain)
         .onHover { hovered in
             isHovered = hovered
         }
+        .animation(.spring(response: 0.20, dampingFraction: 0.86), value: isExpanded)
+        .animation(.easeOut(duration: 0.14), value: isSelected)
     }
 
     private var rowBackground: Color {
         if isSelected {
-            return Color.black.opacity(isHovered ? 0.085 : 0.06)
+            return Color.black.opacity(isExpanded ? 0.085 : 0.06)
         }
-        return Color.black.opacity(isHovered ? 0.04 : 0)
+        return Color.black.opacity(isExpanded ? 0.04 : 0)
     }
 }
 
