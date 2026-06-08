@@ -30,6 +30,18 @@ enum AtelierColors {
         light: .white,
         dark: NSColor(red: 54 / 255, green: 58 / 255, blue: 67 / 255, alpha: 1)
     )
+    static let sidebarPaneButton = Color.atelier(
+        light: NSColor.white.withAlphaComponent(0.86),
+        dark: NSColor(red: 36 / 255, green: 39 / 255, blue: 46 / 255, alpha: 1)
+    )
+    static let sidebarPaneButtonStroke = Color.atelier(
+        light: NSColor.black.withAlphaComponent(0.06),
+        dark: NSColor(red: 62 / 255, green: 66 / 255, blue: 76 / 255, alpha: 1)
+    )
+    static let sidebarPaneButtonForeground = Color.atelier(
+        light: NSColor.secondaryLabelColor,
+        dark: NSColor.white.withAlphaComponent(0.82)
+    )
     static let selectedSubtab = Color.atelier(
         light: NSColor.black.withAlphaComponent(0.06),
         dark: NSColor.white.withAlphaComponent(0.08)

@@ -252,7 +252,7 @@ private struct PaneHoverIcon: View {
         case .rail:
             AtelierColors.railForeground
         case .sidebar:
-            .white.opacity(0.82)
+            AtelierColors.sidebarPaneButton
         }
     }
 
@@ -261,7 +261,7 @@ private struct PaneHoverIcon: View {
         case .rail:
             AtelierColors.railForeground.opacity(0.20)
         case .sidebar:
-            .black.opacity(0.06)
+            AtelierColors.sidebarPaneButtonStroke
         }
     }
 
@@ -279,7 +279,7 @@ private struct PaneHoverIcon: View {
         case .rail:
             AtelierColors.rail
         case .sidebar:
-            .secondary
+            AtelierColors.sidebarPaneButtonForeground
         }
     }
 }
