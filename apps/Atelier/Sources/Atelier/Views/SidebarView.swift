@@ -146,10 +146,17 @@ struct SubtabSidebarView: View {
             return running > 0 ? "\(running)" : "\(store.agents.count)"
         case .activity:
             return nil
+        case .events:
+            return store.memoryEvents.isEmpty ? nil : "\(store.memoryEvents.count)"
+        case .usage:
+            return store.usageSummary.map { AtelierFormatters.currency($0.totalCost) }
         case .memory:
             return "\(store.memories.count)"
         case .automations:
             return "\(store.automations.filter(\.enabled).count)"
+        case .drafts:
+            let pending = store.drafts.filter { $0.status == "pending" }.count
+            return pending > 0 ? "\(pending)" : nil
         case .consolidation:
             return store.consolidationRuns.isEmpty ? nil : "\(store.consolidationRuns.count)"
         case .connections:

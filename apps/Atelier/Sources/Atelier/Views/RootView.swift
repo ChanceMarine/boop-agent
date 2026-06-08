@@ -76,7 +76,8 @@ private struct DetailCard<Content: View>: View {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .stroke(AtelierColors.cardStroke, lineWidth: 1)
             }
-            .shadow(color: .black.opacity(0.03), radius: 18, x: 0, y: 10)
+            .shadow(color: .black.opacity(0.08), radius: 28, x: 0, y: 16)
+            .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
     }
 }
 
@@ -93,10 +94,16 @@ private struct DetailView: View {
             AgentsView()
         case .activity:
             ActivityView()
+        case .events:
+            EventsView()
+        case .usage:
+            UsageView()
         case .memory:
             MemoryView()
         case .automations:
             AutomationsView()
+        case .drafts:
+            DraftsView()
         case .consolidation:
             ConsolidationView()
         case .connections:

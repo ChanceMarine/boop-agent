@@ -203,3 +203,100 @@ struct ConsolidationRun: Identifiable, Decodable, Hashable {
         case completedAt
     }
 }
+
+struct MemoryEventRecord: Identifiable, Decodable, Hashable {
+    let id: String
+    let eventType: String
+    let conversationId: String?
+    let memoryId: String?
+    let agentId: String?
+    let data: String
+    let createdAt: Double
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case eventType
+        case conversationId
+        case memoryId
+        case agentId
+        case data
+        case createdAt
+    }
+}
+
+struct UsageRecord: Identifiable, Decodable, Hashable {
+    let id: String
+    let source: String
+    let conversationId: String?
+    let turnId: String?
+    let agentId: String?
+    let runId: String?
+    let runtime: String?
+    let billingMode: String?
+    let model: String
+    let inputTokens: Int
+    let outputTokens: Int
+    let cacheReadTokens: Int
+    let cacheCreationTokens: Int
+    let costUsd: Double
+    let durationMs: Double
+    let createdAt: Double
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case source
+        case conversationId
+        case turnId
+        case agentId
+        case runId
+        case runtime
+        case billingMode
+        case model
+        case inputTokens
+        case outputTokens
+        case cacheReadTokens
+        case cacheCreationTokens
+        case costUsd
+        case durationMs
+        case createdAt
+    }
+}
+
+struct UsageSummary: Decodable, Hashable {
+    let totalCost: Double
+    let bySource: [String: UsageSourceSummary]
+    let rowCount: Int
+}
+
+struct UsageSourceSummary: Decodable, Hashable {
+    let costUsd: Double
+    let inputTokens: Int
+    let outputTokens: Int
+    let cacheReadTokens: Int
+    let cacheCreationTokens: Int
+    let count: Int
+}
+
+struct DraftRecord: Identifiable, Decodable, Hashable {
+    let id: String
+    let draftId: String
+    let conversationId: String
+    let kind: String
+    let summary: String
+    let payload: String
+    let status: String
+    let createdAt: Double
+    let decidedAt: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case draftId
+        case conversationId
+        case kind
+        case summary
+        case payload
+        case status
+        case createdAt
+        case decidedAt
+    }
+}

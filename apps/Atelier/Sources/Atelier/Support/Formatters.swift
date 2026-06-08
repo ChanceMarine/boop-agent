@@ -33,4 +33,19 @@ enum AtelierFormatters {
         if value < 0.01 { return String(format: "$%.4f", value) }
         return String(format: "$%.2f", value)
     }
+
+    static func duration(milliseconds: Double) -> String {
+        if milliseconds < 1_000 {
+            return "\(Int(milliseconds))ms"
+        }
+        if milliseconds < 60_000 {
+            return String(format: "%.1fs", milliseconds / 1_000)
+        }
+        return String(format: "%.1fm", milliseconds / 60_000)
+    }
+
+    static func tail(_ value: String?, count: Int = 6) -> String? {
+        guard let value, !value.isEmpty else { return nil }
+        return String(value.suffix(count))
+    }
 }

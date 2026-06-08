@@ -11,6 +11,10 @@ final class AtelierStore: ObservableObject {
     @Published var memories: [MemoryRecord] = []
     @Published var automations: [AutomationRecord] = []
     @Published var consolidationRuns: [ConsolidationRun] = []
+    @Published var memoryEvents: [MemoryEventRecord] = []
+    @Published var usageRecords: [UsageRecord] = []
+    @Published var usageSummary: UsageSummary?
+    @Published var drafts: [DraftRecord] = []
     @Published var toolkits: [Toolkit] = []
     @Published var browserStatus: BrowserStatus?
     @Published var changelog: ChangelogPayload?
@@ -21,6 +25,9 @@ final class AtelierStore: ObservableObject {
     @Published var isLoadingMemory = false
     @Published var isLoadingAutomations = false
     @Published var isLoadingConsolidation = false
+    @Published var isLoadingEvents = false
+    @Published var isLoadingUsage = false
+    @Published var isLoadingDrafts = false
     @Published var isLoadingConnections = false
     @Published var isLoadingBrowser = false
     @Published var isLoadingChangelog = false
@@ -174,6 +181,45 @@ final class AtelierStore: ObservableObject {
         defer { isLoadingConsolidation = false }
         do {
             consolidationRuns = try await convexClient.consolidationRuns()
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadEvents() async {
+        guard !isLoadingEvents else { return }
+        isLoadingEvents = true
+        defer { isLoadingEvents = false }
+        do {
+            memoryEvents = try await convexClient.memoryEvents()
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadUsage() async {
+        guard !isLoadingUsage else { return }
+        isLoadingUsage = true
+        defer { isLoadingUsage = false }
+        do {
+            async let records = convexClient.usageRecords()
+            async let summary = convexClient.usageSummary()
+            usageRecords = try await records
+            usageSummary = try await summary
+            lastError = nil
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    func loadDrafts() async {
+        guard !isLoadingDrafts else { return }
+        isLoadingDrafts = true
+        defer { isLoadingDrafts = false }
+        do {
+            drafts = try await convexClient.drafts()
             lastError = nil
         } catch {
             lastError = error.localizedDescription

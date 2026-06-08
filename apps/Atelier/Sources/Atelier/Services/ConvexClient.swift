@@ -79,6 +79,38 @@ final class ConvexClient {
         )
     }
 
+    func memoryEvents(limit: Int = 120) async throws -> [MemoryEventRecord] {
+        try await query(
+            "memoryEvents:recent",
+            args: ["limit": limit],
+            as: [MemoryEventRecord].self
+        )
+    }
+
+    func usageRecords(limit: Int = 100) async throws -> [UsageRecord] {
+        try await query(
+            "usageRecords:recent",
+            args: ["limit": limit],
+            as: [UsageRecord].self
+        )
+    }
+
+    func usageSummary(limit: Int = 5_000) async throws -> UsageSummary {
+        try await query(
+            "usageRecords:summary",
+            args: ["limit": limit],
+            as: UsageSummary.self
+        )
+    }
+
+    func drafts(limit: Int = 50) async throws -> [DraftRecord] {
+        try await query(
+            "drafts:recent",
+            args: ["limit": limit],
+            as: [DraftRecord].self
+        )
+    }
+
     private func query<Value: Decodable>(
         _ path: String,
         args: [String: Any],

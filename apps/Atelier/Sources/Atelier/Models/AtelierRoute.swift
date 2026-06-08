@@ -40,7 +40,7 @@ enum AtelierMainTab: String, CaseIterable, Identifiable {
         case .agent:
             [
                 AtelierSubtabSection(id: "start", title: nil, routes: [.overview, .chat]),
-                AtelierSubtabSection(id: "work", title: "Work", routes: [.agents, .activity]),
+                AtelierSubtabSection(id: "work", title: "Work", routes: [.agents, .activity, .events, .usage]),
             ]
         case .memory:
             [
@@ -48,7 +48,7 @@ enum AtelierMainTab: String, CaseIterable, Identifiable {
             ]
         case .workflows:
             [
-                AtelierSubtabSection(id: "workflows", title: nil, routes: [.automations, .consolidation]),
+                AtelierSubtabSection(id: "workflows", title: nil, routes: [.automations, .drafts, .consolidation]),
             ]
         case .connections:
             [
@@ -72,8 +72,11 @@ enum AtelierRoute: String, CaseIterable, Identifiable {
     case chat
     case agents
     case activity
+    case events
+    case usage
     case memory
     case automations
+    case drafts
     case consolidation
     case connections
     case browser
@@ -89,8 +92,11 @@ enum AtelierRoute: String, CaseIterable, Identifiable {
         case .chat: "Chat"
         case .agents: "Agents"
         case .activity: "Activity"
+        case .events: "Events"
+        case .usage: "Usage"
         case .memory: "Memory"
         case .automations: "Automations"
+        case .drafts: "Drafts"
         case .consolidation: "Consolidation"
         case .connections: "Connections"
         case .browser: "Browser"
@@ -106,8 +112,11 @@ enum AtelierRoute: String, CaseIterable, Identifiable {
         case .chat: "bubble.left.and.bubble.right"
         case .agents: "cpu"
         case .activity: "waveform.path.ecg"
+        case .events: "bolt.horizontal.circle"
+        case .usage: "chart.line.uptrend.xyaxis"
         case .memory: "books.vertical"
         case .automations: "clock.arrow.circlepath"
+        case .drafts: "doc.text.magnifyingglass"
         case .consolidation: "arrow.triangle.merge"
         case .connections: "link"
         case .browser: "globe"
@@ -119,11 +128,11 @@ enum AtelierRoute: String, CaseIterable, Identifiable {
 
     var mainTab: AtelierMainTab {
         switch self {
-        case .overview, .chat, .agents, .activity:
+        case .overview, .chat, .agents, .activity, .events, .usage:
             .agent
         case .memory:
             .memory
-        case .automations, .consolidation:
+        case .automations, .drafts, .consolidation:
             .workflows
         case .connections, .browser:
             .connections

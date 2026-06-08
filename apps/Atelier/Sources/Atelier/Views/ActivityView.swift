@@ -84,8 +84,16 @@ struct ActivityView: View {
                 systemImage: "arrow.triangle.merge"
             )
         }
+        let eventItems = store.memoryEvents.prefix(8).map {
+            ActivityItem(
+                title: $0.eventType,
+                subtitle: $0.data.isEmpty ? "Memory event" : $0.data,
+                createdAt: $0.createdAt,
+                systemImage: "bolt.horizontal.circle"
+            )
+        }
 
-        return (agentItems + automationItems + consolidationItems)
+        return (agentItems + automationItems + consolidationItems + eventItems)
             .sorted { $0.createdAt > $1.createdAt }
             .prefix(12)
             .map { $0 }
@@ -96,6 +104,7 @@ struct ActivityView: View {
         await store.loadAgents()
         await store.loadAutomations()
         await store.loadConsolidation()
+        await store.loadEvents()
     }
 }
 
