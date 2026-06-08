@@ -65,25 +65,27 @@ private struct RailTabButton: View {
 
     var body: some View {
         Button(action: action) {
-            ZStack(alignment: .trailing) {
+            ZStack(alignment: .topTrailing) {
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
                     .fill(backgroundOpacity)
                     .frame(width: isHovered ? 42 : 38, height: isHovered ? 42 : 38)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
                 Image(systemName: tab.systemImage)
                     .font(.system(size: isHovered ? 17 : 16, weight: .semibold))
                     .frame(width: 38, height: 38)
                     .foregroundStyle(isSelected ? .white : .white.opacity(isHovered ? 0.88 : 0.68))
-                    .offset(x: isHovered ? -4 : 0)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
                 PaneHoverIcon(style: .rail)
                     .opacity(isHovered ? 1 : 0)
-                    .scaleEffect(isHovered ? 1 : 0.82)
-                    .offset(x: isHovered ? 12 : 6)
+                    .scaleEffect(isHovered ? 1 : 0.76)
+                    .rotationEffect(.degrees(isHovered ? 0 : -6))
+                    .offset(x: -3, y: 3)
                     .allowsHitTesting(false)
             }
-            .frame(width: 44, height: 44)
-            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .frame(width: 50, height: 48)
+            .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
             .scaleEffect(isHovered ? 1.03 : 1)
             .animation(.spring(response: 0.20, dampingFraction: 0.78), value: isHovered)
             .animation(.easeOut(duration: 0.14), value: isSelected)
@@ -114,25 +116,53 @@ private struct PaneHoverIcon: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .fill(background)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .stroke(stroke, lineWidth: 1)
                 }
+                .shadow(color: shadow, radius: 4, x: 0, y: 2)
 
             Image(systemName: "sidebar.right")
-                .font(.system(size: 9, weight: .semibold))
+                .font(.system(size: iconSize, weight: .semibold))
                 .foregroundStyle(foreground)
         }
-        .frame(width: 21, height: 21)
+        .frame(width: size, height: size)
         .accessibilityHidden(true)
+    }
+
+    private var size: CGFloat {
+        switch style {
+        case .rail:
+            18
+        case .sidebar:
+            21
+        }
+    }
+
+    private var iconSize: CGFloat {
+        switch style {
+        case .rail:
+            8
+        case .sidebar:
+            9
+        }
+    }
+
+    private var cornerRadius: CGFloat {
+        switch style {
+        case .rail:
+            5
+        case .sidebar:
+            6
+        }
     }
 
     private var background: Color {
         switch style {
         case .rail:
-            .white.opacity(0.18)
+            .white
         case .sidebar:
             .white.opacity(0.82)
         }
@@ -147,10 +177,19 @@ private struct PaneHoverIcon: View {
         }
     }
 
+    private var shadow: Color {
+        switch style {
+        case .rail:
+            .black.opacity(0.16)
+        case .sidebar:
+            .black.opacity(0.04)
+        }
+    }
+
     private var foreground: Color {
         switch style {
         case .rail:
-            .white.opacity(0.92)
+            AtelierColors.rail
         case .sidebar:
             .secondary
         }
