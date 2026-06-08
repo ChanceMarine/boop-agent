@@ -61,23 +61,99 @@ private struct RailTabButton: View {
     let isSelected: Bool
     let action: () -> Void
 
+    @State private var isHovered = false
+
     var body: some View {
         Button(action: action) {
-            Image(systemName: tab.systemImage)
-                .font(.system(size: 16, weight: .semibold))
-                .frame(width: 38, height: 38)
-                .foregroundStyle(isSelected ? .white : .white.opacity(0.68))
-                .background {
-                    if isSelected {
-                        RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .fill(.white.opacity(0.14))
-                    }
-                }
-                .contentShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+            ZStack(alignment: .trailing) {
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(backgroundOpacity)
+                    .frame(width: isHovered ? 42 : 38, height: isHovered ? 42 : 38)
+
+                Image(systemName: tab.systemImage)
+                    .font(.system(size: isHovered ? 17 : 16, weight: .semibold))
+                    .frame(width: 38, height: 38)
+                    .foregroundStyle(isSelected ? .white : .white.opacity(isHovered ? 0.88 : 0.68))
+                    .offset(x: isHovered ? -4 : 0)
+
+                PaneHoverIcon(style: .rail)
+                    .opacity(isHovered ? 1 : 0)
+                    .scaleEffect(isHovered ? 1 : 0.82)
+                    .offset(x: isHovered ? 12 : 6)
+                    .allowsHitTesting(false)
+            }
+            .frame(width: 44, height: 44)
+            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .scaleEffect(isHovered ? 1.03 : 1)
+            .animation(.spring(response: 0.20, dampingFraction: 0.78), value: isHovered)
+            .animation(.easeOut(duration: 0.14), value: isSelected)
         }
         .buttonStyle(.plain)
+        .onHover { hovered in
+            isHovered = hovered
+        }
         .help(tab.title)
         .accessibilityLabel(tab.title)
+    }
+
+    private var backgroundOpacity: Color {
+        if isSelected {
+            return .white.opacity(isHovered ? 0.18 : 0.14)
+        }
+        return .white.opacity(isHovered ? 0.09 : 0)
+    }
+}
+
+private struct PaneHoverIcon: View {
+    let style: Style
+
+    enum Style {
+        case rail
+        case sidebar
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(background)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(stroke, lineWidth: 1)
+                }
+
+            Image(systemName: "sidebar.right")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(foreground)
+        }
+        .frame(width: 21, height: 21)
+        .accessibilityHidden(true)
+    }
+
+    private var background: Color {
+        switch style {
+        case .rail:
+            .white.opacity(0.18)
+        case .sidebar:
+            .white.opacity(0.82)
+        }
+    }
+
+    private var stroke: Color {
+        switch style {
+        case .rail:
+            .white.opacity(0.20)
+        case .sidebar:
+            .black.opacity(0.06)
+        }
+    }
+
+    private var foreground: Color {
+        switch style {
+        case .rail:
+            .white.opacity(0.92)
+        case .sidebar:
+            .secondary
+        }
     }
 }
 
@@ -179,17 +255,21 @@ private struct SubtabRow: View {
     let isSelected: Bool
     let action: () -> Void
 
+    @State private var isHovered = false
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 10) {
                 Image(systemName: route.systemImage)
                     .font(.system(size: 13, weight: .medium))
                     .frame(width: 18)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isSelected ? .primary : .secondary)
+                    .scaleEffect(isHovered ? 1.05 : 1)
 
                 Text(route.title)
                     .font(.callout)
                     .foregroundStyle(.primary)
+                    .offset(x: isHovered ? 1 : 0)
 
                 Spacer()
 
@@ -199,19 +279,37 @@ private struct SubtabRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
+                        .opacity(isHovered ? 0.72 : 1)
                 }
+
+                PaneHoverIcon(style: .sidebar)
+                    .opacity(isHovered ? 1 : 0)
+                    .scaleEffect(isHovered ? 1 : 0.84)
+                    .frame(width: isHovered ? 21 : 0)
+                    .allowsHitTesting(false)
             }
             .padding(.horizontal, 10)
             .frame(height: 30)
             .background {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(AtelierColors.selectedSubtab)
-                }
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(rowBackground)
             }
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .scaleEffect(isHovered ? 1.01 : 1, anchor: .center)
+            .animation(.spring(response: 0.20, dampingFraction: 0.86), value: isHovered)
+            .animation(.easeOut(duration: 0.14), value: isSelected)
         }
         .buttonStyle(.plain)
+        .onHover { hovered in
+            isHovered = hovered
+        }
+    }
+
+    private var rowBackground: Color {
+        if isSelected {
+            return Color.black.opacity(isHovered ? 0.085 : 0.06)
+        }
+        return Color.black.opacity(isHovered ? 0.04 : 0)
     }
 }
 
