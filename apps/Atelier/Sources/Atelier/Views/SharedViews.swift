@@ -1,13 +1,56 @@
+import AppKit
 import SwiftUI
 
 enum AtelierColors {
-    static let windowBackground = Color(red: 247 / 255, green: 248 / 255, blue: 250 / 255)
-    static let rail = Color(red: 37 / 255, green: 37 / 255, blue: 37 / 255)
-    static let card = Color(red: 252 / 255, green: 252 / 255, blue: 252 / 255)
-    static let cardStroke = Color.white
-    static let selectedSubtab = Color.black.opacity(0.06)
-    static let separator = Color.black.opacity(0.06)
-    static let softFill = Color.black.opacity(0.035)
+    static let windowBackground = Color.atelier(
+        light: NSColor(red: 247 / 255, green: 248 / 255, blue: 250 / 255, alpha: 1),
+        dark: NSColor(red: 15 / 255, green: 16 / 255, blue: 19 / 255, alpha: 1)
+    )
+    static let rail = Color.atelier(
+        light: NSColor(red: 37 / 255, green: 37 / 255, blue: 37 / 255, alpha: 1),
+        dark: NSColor(red: 37 / 255, green: 37 / 255, blue: 37 / 255, alpha: 1)
+    )
+    static let railForeground = Color.atelier(
+        light: .white,
+        dark: .white
+    )
+    static let card = Color.atelier(
+        light: NSColor(red: 252 / 255, green: 252 / 255, blue: 252 / 255, alpha: 1),
+        dark: NSColor(red: 28 / 255, green: 30 / 255, blue: 35 / 255, alpha: 1)
+    )
+    static let cardStroke = Color.atelier(
+        light: .white,
+        dark: NSColor(red: 44 / 255, green: 47 / 255, blue: 54 / 255, alpha: 1)
+    )
+    static let composer = Color.atelier(
+        light: NSColor(red: 252 / 255, green: 252 / 255, blue: 252 / 255, alpha: 1),
+        dark: NSColor(red: 36 / 255, green: 39 / 255, blue: 46 / 255, alpha: 1)
+    )
+    static let composerStroke = Color.atelier(
+        light: .white,
+        dark: NSColor(red: 54 / 255, green: 58 / 255, blue: 67 / 255, alpha: 1)
+    )
+    static let selectedSubtab = Color.atelier(
+        light: NSColor.black.withAlphaComponent(0.06),
+        dark: NSColor.white.withAlphaComponent(0.08)
+    )
+    static let separator = Color.atelier(
+        light: NSColor.black.withAlphaComponent(0.06),
+        dark: NSColor.white.withAlphaComponent(0.07)
+    )
+    static let softFill = Color.atelier(
+        light: NSColor.black.withAlphaComponent(0.035),
+        dark: NSColor.white.withAlphaComponent(0.055)
+    )
+}
+
+private extension Color {
+    static func atelier(light: NSColor, dark: NSColor) -> Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            let match = appearance.bestMatch(from: [.darkAqua, .aqua])
+            return match == .darkAqua ? dark : light
+        })
+    }
 }
 
 struct HeaderView: View {

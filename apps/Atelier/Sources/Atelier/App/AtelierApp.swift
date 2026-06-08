@@ -3,12 +3,13 @@ import SwiftUI
 @main
 struct AtelierApp: App {
     @StateObject private var store = AtelierStore()
+    @AppStorage("atelier.darkMode") private var isDarkMode = false
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(store)
-                .preferredColorScheme(.light)
+                .preferredColorScheme(isDarkMode ? .dark : .light)
                 .task {
                     await store.refreshBackendStatus()
                 }
@@ -27,7 +28,7 @@ struct AtelierApp: App {
         Settings {
             AppSettingsView()
                 .environmentObject(store)
-                .preferredColorScheme(.light)
+                .preferredColorScheme(isDarkMode ? .dark : .light)
                 .frame(width: 520)
                 .padding()
         }

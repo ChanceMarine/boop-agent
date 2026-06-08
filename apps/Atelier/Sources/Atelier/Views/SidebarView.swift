@@ -4,6 +4,8 @@ struct MainRailView: View {
     @Binding var selection: AtelierRoute
     let sidePaneRoute: AtelierRoute?
     let openPane: (AtelierRoute) -> Void
+    let isDarkMode: Bool
+    let toggleDarkMode: () -> Void
 
     private var primaryTabs: [AtelierMainTab] {
         AtelierMainTab.allCases.filter { $0 != .settings }
@@ -26,6 +28,11 @@ struct MainRailView: View {
             }
 
             Spacer()
+
+            RailThemeButton(
+                isDarkMode: isDarkMode,
+                action: toggleDarkMode
+            )
 
             RailTabButton(
                 tab: .settings,
@@ -57,7 +64,7 @@ private struct RailLogo: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(.white)
+                .fill(AtelierColors.railForeground)
             Image(systemName: "sparkles")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(AtelierColors.rail)
@@ -96,7 +103,7 @@ private struct RailTabButton: View {
                     Image(systemName: tab.systemImage)
                         .font(.system(size: isExpanded ? 17 : 16, weight: .semibold))
                         .frame(width: 38, height: 38)
-                        .foregroundStyle(isSelected ? .white : .white.opacity(isExpanded ? 0.88 : 0.68))
+                        .foregroundStyle(AtelierColors.railForeground.opacity(isSelected ? 1 : (isExpanded ? 0.88 : 0.68)))
                 }
                 .frame(width: 50, height: 48)
                 .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
@@ -110,7 +117,7 @@ private struct RailTabButton: View {
                 action: paneAction,
                 onHoverChange: { isPaneHovered = $0 }
             )
-            .offset(x: -3, y: 3)
+            .offset(x: -1, y: 1)
         }
         .frame(width: 50, height: 48)
         .onHover { hovered in
@@ -124,9 +131,38 @@ private struct RailTabButton: View {
 
     private var backgroundOpacity: Color {
         if isSelected {
-            return .white.opacity(isExpanded ? 0.18 : 0.14)
+            return AtelierColors.railForeground.opacity(isExpanded ? 0.18 : 0.14)
         }
-        return .white.opacity(isExpanded ? 0.09 : 0)
+        return AtelierColors.railForeground.opacity(isExpanded ? 0.09 : 0)
+    }
+}
+
+private struct RailThemeButton: View {
+    let isDarkMode: Bool
+    let action: () -> Void
+
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isDarkMode ? "sun.max" : "moon")
+                .font(.system(size: isHovered ? 17 : 16, weight: .semibold))
+                .frame(width: 38, height: 38)
+                .foregroundStyle(AtelierColors.railForeground.opacity(isHovered ? 0.92 : 0.70))
+                .background {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(AtelierColors.railForeground.opacity(isHovered ? 0.12 : 0))
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .help(isDarkMode ? "Switch to light mode" : "Switch to dark mode")
+        .accessibilityLabel(isDarkMode ? "Switch to light mode" : "Switch to dark mode")
+        .onHover { hovered in
+            isHovered = hovered
+        }
+        .scaleEffect(isHovered ? 1.03 : 1)
+        .animation(.spring(response: 0.20, dampingFraction: 0.78), value: isHovered)
     }
 }
 
@@ -214,7 +250,7 @@ private struct PaneHoverIcon: View {
     private var background: Color {
         switch style {
         case .rail:
-            .white
+            AtelierColors.railForeground
         case .sidebar:
             .white.opacity(0.82)
         }
@@ -223,7 +259,7 @@ private struct PaneHoverIcon: View {
     private var stroke: Color {
         switch style {
         case .rail:
-            .white.opacity(0.20)
+            AtelierColors.railForeground.opacity(0.20)
         case .sidebar:
             .black.opacity(0.06)
         }
@@ -420,9 +456,9 @@ private struct SubtabRow: View {
 
     private var rowBackground: Color {
         if isSelected {
-            return Color.black.opacity(isExpanded ? 0.085 : 0.06)
+            return AtelierColors.selectedSubtab.opacity(isExpanded ? 1.35 : 1)
         }
-        return Color.black.opacity(isExpanded ? 0.04 : 0)
+        return AtelierColors.softFill.opacity(isExpanded ? 1 : 0)
     }
 }
 

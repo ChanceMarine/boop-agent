@@ -144,11 +144,11 @@ private struct MessageBubble: View {
     }
 
     private var background: Color {
-        message.role == .user ? Color.black.opacity(0.05) : Color.white
+        message.role == .user ? AtelierColors.selectedSubtab.opacity(1.1) : AtelierColors.softFill
     }
 
     private var stroke: Color {
-        message.role == .user ? Color.clear : AtelierColors.separator
+        message.role == .user ? AtelierColors.separator.opacity(0.7) : AtelierColors.separator
     }
 }
 
@@ -193,15 +193,15 @@ private struct ComposerView: View {
             Button(action: send) {
                 ZStack {
                     Circle()
-                        .fill(canSend ? AtelierColors.rail : Color.black.opacity(0.08))
+                        .fill(canSend ? AtelierColors.rail : AtelierColors.softFill)
                     if isSending {
                         ProgressView()
                             .controlSize(.small)
-                            .tint(.white)
+                            .tint(AtelierColors.railForeground)
                     } else {
                         Image(systemName: "arrow.up")
                             .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(canSend ? .white : .secondary)
+                            .foregroundStyle(canSend ? AtelierColors.railForeground : .secondary)
                     }
                 }
                 .frame(width: 32, height: 32)
@@ -211,11 +211,11 @@ private struct ComposerView: View {
             .disabled(!canSend)
         }
         .padding(14)
-        .background(Color.white, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background(AtelierColors.composer, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white, lineWidth: 1)
+                .stroke(AtelierColors.composerStroke, lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.04), radius: 16, x: 0, y: 8)
+        .shadow(color: .black.opacity(0.08), radius: 18, x: 0, y: 10)
     }
 }
